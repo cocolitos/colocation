@@ -20,6 +20,7 @@ import { getToken, removeUserSession, setUserSession } from './Utils/Common';
 
 import Login from './Login.js';
 import Dashboard from './Dashboard.js';
+import Calendar from './calendar.js';
 import Home from './Home.js';
 import Profile from './Profile.js';
 
@@ -45,25 +46,6 @@ function App() {
   const classes = useStyles();
   const classes_default = useStyles_default();
   
-  useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      return;
-    }
- 
-    axios.get(`https://api-sgetas.herokuapp.com/auth/verifyToken?token=${token}`).then(response => {
-      //setUserSession(response.data.token, response.data.user);
-      setAuthLoading(false);
-    }).catch(error => {
-      removeUserSession();
-      setAuthLoading(false);
-    });
-  }, []);
- 
-  if (authLoading && getToken()) {
-    return <div className="content">Checking Authentication...</div>
-  }
-
   return (
     <div className="App">
       <BrowserRouter>
@@ -74,7 +56,7 @@ function App() {
             leftLinks={
               <List className={classes_default.list}>
                 <ListItem className={classes_default.listItem}>
-                  <NavLink className={classes_default.navLink} activeClassName="active" to="/dashboard" color="inherit">
+                  <NavLink className={classes_default.navLink} activeClassName="active" to="/calendar" color="inherit">
                     
                       Calendrier
                     
@@ -91,7 +73,7 @@ function App() {
               ) : (
                 <ListItem className={classes_default.listItem}>
                   <NavLink className={classes_default.navLink} activeClassName="active" to="/login" color="inherit">
-                      Se connecter
+                      Se connecter / S'inscrire
                     </NavLink>
                   </ListItem>
               )
@@ -101,7 +83,7 @@ function App() {
             <Switch>
               <Route exact path="/" component={Home} />
               <PublicRoute path="/login" component={Login} />
-              <PrivateRoute path="/dashboard" component={Dashboard} />
+              <PrivateRoute path="/calendar" component={Calendar} />
               <PrivateRoute path="/profile" component={Profile} />
             </Switch>
           </div>

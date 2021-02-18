@@ -27,7 +27,12 @@ const useStyles = makeStyles((theme) => ({
 
 function Login(props) {
   const classes = useStyles();
-  const [username, setUsername ]= useState('');
+  const [loginusername, setLoginUsername ] = useState('');
+  const [loginpassword, setLoginPassword] = useState('');
+  const [username, setUsername ] = useState('');
+  const [name, setName ] = useState('');
+  const [surname, setSurname ] = useState('');
+  const [email, setEmail ] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -37,10 +42,36 @@ function Login(props) {
     event.preventDefault();
     setError(null);
     setLoading(true);
-    axios.post('https://api-sgetas.herokuapp.com/auth/signin'  , {username: username, password: password }).then(response => {
+    axios.post('https://cocolinquation.herokuapp.com/users/login'  , {username: loginusername, password: loginpassword }).then(response => {
       console.log(response);
       setLoading(false);
-      setUserSession(response.data.accessToken, response.data);
+      console.log(response.data);
+      setUserSession(response.data.token, response.data);
+      window.location.reload(false);
+      props.history.push('/calendar');
+    }).catch(error => {
+      setLoading(false);
+      console.log("erreur");
+      console.log(error);
+      if (error.response && error.response.status === 401) setError(error.response.data.message);
+      else setError("Something went wrong. Please try again later.");
+    });
+  }
+
+  const handleRegister = (event) => {
+    event.preventDefault();
+    setError(null);
+    setLoading(true);
+    axios.post('https://cocolinquation.herokuapp.com/users/register'  , {
+      username: username,
+      password: password,
+      last_name: name,
+      first_name: surname,
+      email: email
+    }).then(response => {
+      console.log(response);
+      setLoading(false);
+      //setUserSession(response.data.accessToken, response.data);
       window.location.reload(false);
       //props.history.push('/dashboard');
     }).catch(error => {
@@ -53,39 +84,105 @@ function Login(props) {
  
   return (
     <div>
-      <Grid container spacing={3}>
-        <Grid item xs={3}>
-        </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper} style={{ justifyContent: "center"}}>
-            <form onSubmit={handleLogin}>
-              <p>Nom d'utilisateur:</p>
-              <input 
-                type="text" 
-                value={username}
-                onChange={event => setUsername(event.target.value)}
-                placeholder="Nom"
-                required 
-              />
-              <p>Mot de passe</p>
-              <input 
-                type="password" 
-                value={password}
-                onChange={event => setPassword(event.target.value)}
-                placeholder="Email"
-              />
-              <p>
-                {error && <><small style={{ color: 'red' }}>{error}</small><br /></>}<br />
-                <Button type="submit" color="primary">
-                  Se conecter
-                </Button>
-              </p>
-            </form>
-          </Paper>
-        </Grid>
-        <Grid item xs={3}>
+      <Grid container spacing={12}>
+        <Grid container spacing={3}>
+          <Grid item xs={3}>
+          </Grid>
+          <Grid item xs={6}>
+            <Paper className={classes.paper} style={{ justifyContent: "center"}}>
+              Se connecter
+              <form onSubmit={handleLogin}>
+                <p>Nom d'utilisateur:</p>
+                <input 
+                  type="text" 
+                  value={loginusername}
+                  onChange={event => setLoginUsername(event.target.value)}
+                  placeholder="Nom utilisateur"
+                  required 
+                />
+                <p>Mot de passe</p>
+                <input 
+                  type="password" 
+                  value={loginpassword}
+                  onChange={event => setLoginPassword(event.target.value)}
+                  placeholder="Mot de passe"
+                />
+                <p>
+                  {error && <><small style={{ color: 'red' }}>{error}</small><br /></>}<br />
+                  <Button type="submit" color="primary">
+                    Se conecter
+                  </Button>
+                </p> 
+              </form>
+            </Paper>
+          </Grid>
+          <Grid item xs={3}>
+          </Grid>
         </Grid>
       </Grid>
+
+      <Grid container spacing={12}>
+        
+        <Grid container spacing={3}>
+          <Grid item xs={3}>
+          </Grid>
+          <Grid item xs={6}>
+            <Paper className={classes.paper} style={{ justifyContent: "center"}}>
+              S'inscrire
+              <form onSubmit={handleRegister}>
+                <p>Nom d'utilisateur:</p>
+                <input 
+                  type="text" 
+                  value={username}
+                  onChange={event => setUsername(event.target.value)}
+                  placeholder="Nom utilisateur"
+                  required 
+                />
+                <p>Prenom:</p>
+                <input 
+                  type="text" 
+                  value={surname}
+                  onChange={event => setSurname(event.target.value)}
+                  placeholder="Prenom"
+                  required 
+                />
+                <p>Nom:</p>
+                <input 
+                  type="text" 
+                  value={name}
+                  onChange={event => setName(event.target.value)}
+                  placeholder="Nom"
+                  required 
+                />
+                <p>Email:</p>
+                <input 
+                  type="text" 
+                  value={email}
+                  onChange={event => setEmail(event.target.value)}
+                  placeholder="Email"
+                  required 
+                />
+                <p>Mot de passe</p>
+                <input 
+                  type="password" 
+                  value={password}
+                  onChange={event => setPassword(event.target.value)}
+                  placeholder="Mot de passe"
+                />
+                <p>
+                  {error && <><small style={{ color: 'red' }}>{error}</small><br /></>}<br />
+                  <Button type="submit" color="info">
+                    S'enregistrer
+                  </Button>
+                </p> 
+              </form>
+            </Paper>
+          </Grid>
+          <Grid item xs={3}>
+          </Grid>
+        </Grid>
+      </Grid>
+
     </div>
   );
 
