@@ -19,6 +19,7 @@ import PublicRoute from './Utils/PublicRoute';
 import { getToken, removeUserSession, setUserSession } from './Utils/Common';
 
 import Login from './Login.js';
+import Register from './register.js';
 import Dashboard from './Dashboard.js';
 import Calendar from './calendar.js';
 import My_calendar from './my_calendar.js';
@@ -97,6 +98,7 @@ function App() {
             <Switch>
               <Route exact path="/" component={Home} />
               <PublicRoute path="/login" component={Login} />
+              <PublicRoute path="/register" component={Register} />
               <PrivateRoute path="/calendar" component={Calendar} />
               <PrivateRoute path="/my_calendar" component={My_calendar} />
               <PrivateRoute path="/requests" component={Requests} />

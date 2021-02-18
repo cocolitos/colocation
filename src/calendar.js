@@ -414,9 +414,6 @@ export default class Calendar extends React.Component {
 								<TableRow key={calendar.id}>
 									<TableCell component="th" scope="row">
 										<p>{calendar.name}</p>
-										<Popup trigger={<Button justIcon round color="danger"><DeleteIcon className={classes.icons} /></Button>} position="right center">
-											<div><Button color="danger" onClick={() => this.deleteCalendar(calendar._id)}>Supprimer</Button></div>
-										</Popup>
 									</TableCell>
 									<TableCell component="th" scope="row">
 										<p>{calendar.CP}</p>

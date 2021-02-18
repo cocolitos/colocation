@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Login(props) {
+function Register(props) {
   const classes = useStyles();
   const [loginusername, setLoginUsername ] = useState('');
   const [loginpassword, setLoginPassword] = useState('');
@@ -73,7 +73,7 @@ function Login(props) {
       setLoading(false);
       //setUserSession(response.data.accessToken, response.data);
       window.location.reload(false);
-      //props.history.push('/dashboard');
+      props.history.push('/login');
     }).catch(error => {
       setLoading(false);
       console.log(error);
@@ -85,44 +85,66 @@ function Login(props) {
   return (
     <div>
       <Grid container spacing={12}>
+        
         <Grid container spacing={3}>
           <Grid item xs={3}>
           </Grid>
           <Grid item xs={6}>
             <Paper className={classes.paper} style={{ justifyContent: "center"}}>
-              Se connecter
-              <form onSubmit={handleLogin}>
+              S'inscrire
+              <form onSubmit={handleRegister}>
                 <p>Nom d'utilisateur:</p>
                 <input 
                   type="text" 
-                  value={loginusername}
-                  onChange={event => setLoginUsername(event.target.value)}
+                  value={username}
+                  onChange={event => setUsername(event.target.value)}
                   placeholder="Nom utilisateur"
+                  required 
+                />
+                <p>Prenom:</p>
+                <input 
+                  type="text" 
+                  value={surname}
+                  onChange={event => setSurname(event.target.value)}
+                  placeholder="Prenom"
+                  required 
+                />
+                <p>Nom:</p>
+                <input 
+                  type="text" 
+                  value={name}
+                  onChange={event => setName(event.target.value)}
+                  placeholder="Nom"
+                  required 
+                />
+                <p>Email:</p>
+                <input 
+                  type="text" 
+                  value={email}
+                  onChange={event => setEmail(event.target.value)}
+                  placeholder="Email"
                   required 
                 />
                 <p>Mot de passe</p>
                 <input 
                   type="password" 
-                  value={loginpassword}
-                  onChange={event => setLoginPassword(event.target.value)}
+                  value={password}
+                  onChange={event => setPassword(event.target.value)}
                   placeholder="Mot de passe"
                 />
                 <p>
                   {error && <><small style={{ color: 'red' }}>{error}</small><br /></>}<br />
-                  <Button type="submit" color="primary">
-                    Se conecter
+                  <Button type="submit" color="info">
+                    S'enregistrer
                   </Button>
                 </p> 
               </form>
-              <a href="/register">s'inscrire</a>
             </Paper>
           </Grid>
           <Grid item xs={3}>
           </Grid>
         </Grid>
       </Grid>
-
-    
 
     </div>
   );
@@ -155,4 +177,4 @@ const useFormInput = initialValue => {
   }
 }
  
-export default Login;
+export default Register;

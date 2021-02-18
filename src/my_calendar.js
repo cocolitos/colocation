@@ -103,6 +103,9 @@ export default class Requests extends React.Component {
 		calendar_name: '',
 		calendar_cp: '',
 		calendar_address: '',
+
+
+		have_calendar: false,
 	};
 
 	orderEquipe() {
@@ -118,6 +121,16 @@ export default class Requests extends React.Component {
 			console.log(response.data);
 			console.log("------------");
 			this.setState({ requests: response.data });
+
+		}).catch(error => {
+			console.log(error);
+		});
+
+		axios.get(url + '/calendars/me', {headers: {'Authorization': 'Bearer ' + getToken()} }).then(response => {
+			console.log("------------");
+			this.setState({have_calendar: true});
+			console.log(this.state.have_calendar);
+			console.log("------------");
 
 		}).catch(error => {
 			console.log(error);
@@ -353,6 +366,29 @@ export default class Requests extends React.Component {
 		this.setState({showEventReaffecter: true})
 	}
 
+	delete() {
+		axios.delete("https://cocolinquation.herokuapp.com/calendars/",
+			{headers: {'Authorization': 'Bearer ' + getToken()}}
+		).then(response => {
+			console.log(response.data);
+			window.location.reload(false);
+		}).catch(error => {
+			console.log(error);
+		});
+	}
+
+	suicide() {
+		axios.delete("https://cocolinquation.herokuapp.com/users/",
+			{headers: {'Authorization': 'Bearer ' + getToken()}}
+		).then(response => {
+			console.log(response.data);
+			removeUserSession();
+			//window.location.reload(false);
+		}).catch(error => {
+			console.log(error);
+		});
+	}
+
 	render() {
 
 		const useStyles = makeStyles(styles);
@@ -390,10 +426,9 @@ export default class Requests extends React.Component {
 							<TableRow key="header">
 								<TableCell>
 									message
-									<Button justIcon round color="primary" onClick={e => {
-											this.showModal();
-										}}
-									>+</Button>
+								</TableCell>
+								<TableCell>
+									De
 								</TableCell>
 								<TableCell>
 									De
@@ -403,6 +438,10 @@ export default class Requests extends React.Component {
 								</TableCell>
 								<TableCell>
 									Action
+									{(this.state.have_calendar && (
+										<Button color="primary" onClick={() => this.delete()}>Supprimer calendrier</Button>
+									))}
+									<Button color="primary" onClick={() => this.suicide()}>Suicide</Button>
 								</TableCell>
 							</TableRow>
 						</TableHead>
@@ -411,6 +450,9 @@ export default class Requests extends React.Component {
 								<TableRow key={request._id}>
 									<TableCell component="th" scope="row">
 										<p>{request.message}</p>
+									</TableCell>
+									<TableCell component="th" scope="row">
+										<p>{request.name}</p>
 									</TableCell>
 									<TableCell component="th" scope="row">
 										<p>{request.start_time}</p>
