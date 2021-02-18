@@ -21,6 +21,7 @@ import { getToken, removeUserSession, setUserSession } from './Utils/Common';
 import Login from './Login.js';
 import Dashboard from './Dashboard.js';
 import Calendar from './calendar.js';
+import My_calendar from './my_calendar.js';
 import Requests from './requests.js';
 import Home from './Home.js';
 import Profile from './Profile.js';
@@ -70,14 +71,19 @@ function App() {
                     
                   </NavLink>
                 </ListItem>
+                <ListItem className={classes_default.listItem}>
+                  <NavLink className={classes_default.navLink} activeClassName="active" to="/my_calendar" color="inherit">
+                    
+                      Mon calendrier
+                    
+                  </NavLink>
+                </ListItem>
               </List>
             }
             rightLinks= {getToken() ? (
                 <ListItem className={classes_default.listItem}>
-                  <NavLink className={classes_default.navLink} activeClassName="active" to="/profile" color="inherit">
-                      <AccountCircle className={classes_default.icons} /> Profile
-                    </NavLink>
-                  </ListItem>
+                  <AccountCircle className={classes_default.icons} /> Profile
+                </ListItem>
               ) : (
                 <ListItem className={classes_default.listItem}>
                   <NavLink className={classes_default.navLink} activeClassName="active" to="/login" color="inherit">
@@ -92,6 +98,7 @@ function App() {
               <Route exact path="/" component={Home} />
               <PublicRoute path="/login" component={Login} />
               <PrivateRoute path="/calendar" component={Calendar} />
+              <PrivateRoute path="/my_calendar" component={My_calendar} />
               <PrivateRoute path="/requests" component={Requests} />
               <PrivateRoute path="/profile" component={Profile} />
             </Switch>

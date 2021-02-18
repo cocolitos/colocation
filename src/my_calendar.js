@@ -49,7 +49,7 @@ const url = "https://cocolinquation.herokuapp.com";
 
 Transition.displayName = "Transition";
 
-export default class Calendar extends React.Component {
+export default class Requests extends React.Component {
 //function Calendar(props) {
 
 	constructor() {
@@ -98,15 +98,11 @@ export default class Calendar extends React.Component {
 		event_id_event: undefined,
 		event_duration: 1,
 
+		requests: [],
+
 		calendar_name: '',
 		calendar_cp: '',
 		calendar_address: '',
-
-		id_calendar: undefined,
-
-		request_message: '',
-		request_from: '',
-		request_to: '',
 	};
 
 	orderEquipe() {
@@ -117,9 +113,12 @@ export default class Calendar extends React.Component {
 
 	componentDidMount() {
 		console.log(getToken());
-		axios.get(url + '/calendars', {headers: {'Authorization': 'Bearer ' + getToken()} }).then(response => {
-			this.setState({ calendars: response.data });
-			console.log(this.state.calendars);
+		axios.get(url + '/requests/calendar/me', {headers: {'Authorization': 'Bearer ' + getToken()} }).then(response => {
+			console.log("------------");
+			console.log(response.data);
+			console.log("------------");
+			this.setState({ requests: response.data });
+
 		}).catch(error => {
 			console.log(error);
 		});
@@ -278,6 +277,30 @@ export default class Calendar extends React.Component {
 		});
 	}
 
+	accepter(id) {
+		axios.put("https://cocolinquation.herokuapp.com/requests/" + id,
+			{validation: "true"},
+			{headers: {'Authorization': 'Bearer ' + getToken()}}
+		).then(response => {
+			console.log(response.data);
+			window.location.reload(false);
+		}).catch(error => {
+			console.log(error);
+		});
+	}
+
+	refuser(id) {
+		axios.put("https://cocolinquation.herokuapp.com/requests/" + id,
+			{validation: "false"},
+			{headers: {'Authorization': 'Bearer ' + getToken()}}
+		).then(response => {
+			console.log(response.data);
+			window.location.reload(false);
+		}).catch(error => {
+			console.log(error);
+		});
+	}
+
 	handleLogin(event) {
 		console.log(event);
 		window.location.reload(true);
@@ -359,32 +382,6 @@ export default class Calendar extends React.Component {
 			//console.log(React.findDOMNode(this.refs.equipe_nom_ref).value);
 		}
 
-		const handleSubmit_add_request = (event) => {
-			event.preventDefault();
-			if (this.state.nom == '') {
-				console.log("erreur: nom requis");
-				return;
-			}
-			let data = {
-				message: this.state.request_message,
-				start_time: this.state.request_from,
-				end_time: this.state.request_to,
-				calendar_id: this.state.id_calendar
-			}
-			console.log(data);
-			axios.post("https://cocolinquation.herokuapp.com/requests", data
-			, {
-				headers: {'Authorization': 'Bearer ' + getToken()}
-			}).then(response => {
-				console.log(response);
-				window.location.reload(false);
-				//props.history.push('/Calendar');
-			}).catch(error => {
-				console.log(error);
-			});
-			//console.log(React.findDOMNode(this.refs.equipe_nom_ref).value);
-		}
-
 		return (
 			<div>
 				<TableContainer component={Paper}>
@@ -392,44 +389,44 @@ export default class Calendar extends React.Component {
 						<TableHead>
 							<TableRow key="header">
 								<TableCell>
-									Calendrier
+									message
 									<Button justIcon round color="primary" onClick={e => {
 											this.showModal();
 										}}
 									>+</Button>
 								</TableCell>
 								<TableCell>
-									Code Postal
+									De
 								</TableCell>
 								<TableCell>
-									Adresse
+									A
 								</TableCell>
 								<TableCell>
-									Faire une demande
+									Action
 								</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{this.state.calendars.map((calendar) => (
-								<TableRow key={calendar.id}>
+							{this.state.requests.map((request) => (
+								<TableRow key={request._id}>
 									<TableCell component="th" scope="row">
-										<p>{calendar.name}</p>
-										<Popup trigger={<Button justIcon round color="danger"><DeleteIcon className={classes.icons} /></Button>} position="right center">
-											<div><Button color="danger" onClick={() => this.deleteCalendar(calendar._id)}>Supprimer</Button></div>
-										</Popup>
+										<p>{request.message}</p>
 									</TableCell>
 									<TableCell component="th" scope="row">
-										<p>{calendar.CP}</p>
+										<p>{request.start_time}</p>
 									</TableCell>
 									<TableCell component="th" scope="row">
-										<p>{calendar.address}</p>
+										<p>{request.end_time}</p>
 									</TableCell>
 									<TableCell>
-										<Button justIcon round color="primary" onClick={e => {
-											this.state.id_calendar = calendar.id;
-											this.showModalEvent();
-										}}
-									>+</Button>
+										{String(request.validation) != "null" ? (
+											<p>{String(request.validation) == "true" ? (<p>Validé</p>) : (<p>Refuser</p>)}</p>
+										) : (
+											<p>
+												<Button color="danger" onClick={() => this.accepter(request.id)}>Accepter</Button>
+												<Button color="primary" onClick={() => this.refuser(request.id)}>Refuser</Button>
+											</p>
+										)}
 									</TableCell>
 								</TableRow>
 							))}
@@ -507,79 +504,6 @@ export default class Calendar extends React.Component {
 						</DialogActions>
 					</form>
 				</Dialog>
-
-				<Dialog
-					classes={{
-						root: classes.center,
-						paper: classes.modal
-					}}
-					open={this.state.showEvent}
-					TransitionComponent={Transition}
-					keepMounted
-					onClose={this.showModalEvent}
-					aria-labelledby="classic-modal-slide-title"
-					aria-describedby="classic-modal-slide-description"
-				>
-					<DialogTitle
-						id="classic-modal-slide-title"
-						disableTypography
-						className={classes.modalHeader}
-					>
-						Faire une demande
-						<IconButton
-							className={classes.modalCloseButton}
-							key="close"
-							aria-label="Close"
-							color="inherit"
-							onClick={this.showModalEvent}
-						>
-							<Close className={classes.modalClose} />
-						</IconButton>
-					</DialogTitle>
-					<form onSubmit={handleSubmit_add_request}>
-						<DialogContent
-							id="classic-modal-slide-description"
-							className={classes.modalBody}
-						>
-							<input 
-								type="text" 
-								value={this.state.request_message}
-								onChange={event => this.setState({ request_message: event.target.value })}
-								placeholder="message" 
-								required 
-							/>
-							<input 
-								type="date" 
-								value={this.state.request_from}
-								onChange={event => this.setState({ request_from: event.target.value })}
-								placeholder="message" 
-								required 
-							/>
-							<input 
-								type="date" 
-								value={this.state.request_to}
-								onChange={event => this.setState({ request_to: event.target.value })}
-								placeholder="message" 
-								required 
-							/>
-							
-						</DialogContent>
-						<DialogActions className={classes.modalFooter}>
-							<Button type="submit" color="primary">
-								Valider
-							</Button>
-							<Button
-								onClick={this.showModalEvent}
-								color="danger"
-								simple
-							>
-								Fermer
-							</Button>
-						</DialogActions>
-					</form>
-				</Dialog>
-
-
 			</div>
 		);
 	}

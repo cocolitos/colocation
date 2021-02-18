@@ -98,6 +98,8 @@ export default class Requests extends React.Component {
 		event_id_event: undefined,
 		event_duration: 1,
 
+		requests: [],
+
 		calendar_name: '',
 		calendar_cp: '',
 		calendar_address: '',
@@ -111,9 +113,9 @@ export default class Requests extends React.Component {
 
 	componentDidMount() {
 		console.log(getToken());
-		axios.get(url + '/calendars', {headers: {'Authorization': 'Bearer ' + getToken()} }).then(response => {
-			this.setState({ calendars: response.data });
-			console.log(this.state.calendars);
+		axios.get(url + '/requests/me', {headers: {'Authorization': 'Bearer ' + getToken()} }).then(response => {
+			this.setState({ requests: response.data });
+			console.log(this.state.requests);
 		}).catch(error => {
 			console.log(error);
 		});
@@ -360,34 +362,38 @@ export default class Requests extends React.Component {
 						<TableHead>
 							<TableRow key="header">
 								<TableCell>
-									Calendrier
-									<Button justIcon round color="primary" onClick={e => {
-											this.showModal();
-										}}
-									>+</Button>
+									message
 								</TableCell>
 								<TableCell>
-									Code Postal
+									De
 								</TableCell>
 								<TableCell>
-									Adresse
+									A
+								</TableCell>
+								<TableCell>
+									Statut
 								</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{this.state.calendars.map((calendar) => (
-								<TableRow key={calendar._id}>
+							{this.state.requests.map((request) => (
+								<TableRow key={request.id}>
 									<TableCell component="th" scope="row">
-										<p>{calendar.name}</p>
+										<p>{request.message}</p>
 										<Popup trigger={<Button justIcon round color="danger"><DeleteIcon className={classes.icons} /></Button>} position="right center">
-											<div><Button color="danger" onClick={() => this.deleteCalendar(calendar._id)}>Supprimer</Button></div>
+											<div><Button color="danger" onClick={() => this.deleteCalendar(request.id)}>Supprimer</Button></div>
 										</Popup>
 									</TableCell>
 									<TableCell component="th" scope="row">
-										<p>{calendar.CP}</p>
+										<p>{request.start_time}</p>
 									</TableCell>
 									<TableCell component="th" scope="row">
-										<p>{calendar.address}</p>
+										<p>{request.end_time}</p>
+									</TableCell>
+									<TableCell>
+										{String(request.validation) != "null" ? (
+											<p>{String(request.validation) == "true" ? (<p>Validé</p>) : (<p>Refuser</p>)}</p>
+										) : (<p>En attente</p>)}
 									</TableCell>
 								</TableRow>
 							))}
