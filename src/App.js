@@ -21,6 +21,7 @@ import { getToken, removeUserSession, setUserSession } from './Utils/Common';
 import Login from './Login.js';
 import Dashboard from './Dashboard.js';
 import Calendar from './calendar.js';
+import Requests from './requests.js';
 import Home from './Home.js';
 import Profile from './Profile.js';
 
@@ -62,6 +63,13 @@ function App() {
                     
                   </NavLink>
                 </ListItem>
+                <ListItem className={classes_default.listItem}>
+                  <NavLink className={classes_default.navLink} activeClassName="active" to="/requests" color="inherit">
+                    
+                      Requests
+                    
+                  </NavLink>
+                </ListItem>
               </List>
             }
             rightLinks= {getToken() ? (
@@ -84,6 +92,7 @@ function App() {
               <Route exact path="/" component={Home} />
               <PublicRoute path="/login" component={Login} />
               <PrivateRoute path="/calendar" component={Calendar} />
+              <PrivateRoute path="/requests" component={Requests} />
               <PrivateRoute path="/profile" component={Profile} />
             </Switch>
           </div>

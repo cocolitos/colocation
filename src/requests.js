@@ -49,7 +49,7 @@ const url = "https://cocolinquation.herokuapp.com";
 
 Transition.displayName = "Transition";
 
-export default class Calendar extends React.Component {
+export default class Requests extends React.Component {
 //function Calendar(props) {
 
 	constructor() {
